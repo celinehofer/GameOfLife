@@ -8,28 +8,50 @@ public class GameOfLife {
 
     // Liefert eine zufällig initialisierte Welt
     private boolean[][] initWelt() {
+
+        boolean[][] welt = new boolean[DIMx][DIMy];
         Random random = new Random();
-        boolean[][] array = new boolean[DIMx][DIMy];
-        for (int x = 1; x < DIMx - 1; x++ ){
-            for(int y = 1; y < DIMy - 1; y++){
-                array[x][y] = random.nextBoolean();
+
+        //füllt nach zufallsprinzip den array ab
+        for (int x = 1; x < welt.length - 1; x++) {
+            for (int y = 1; y < welt[x].length - 1; y++) {
+                welt[x][y] = random.nextBoolean();
             }
         }
-        return array;
+        return welt;
     }
 
     // Gibt die aktuelle Welt aus
     private void zeigeWelt(boolean[][] welt) {
-        System.out.println(welt);
-        // TODO
+        for (int y = 0; y < welt.length; y++) {
+            for (int x = 0; x < welt[y].length; x++) {
+                System.out.print(welt[y][x] ? " X" : "   ");
+            }
+            System.out.println();
+        }
+    }
 
+    private boolean[][] cloneWelt(boolean[][] welt) {
+        if (welt == null)
+            return null;
+        boolean[][] result = new boolean[welt.length][];
+        for (int r = 0; r < welt.length; r++) {
+            result[r] = welt[r].clone();
+        }
+        return result;
     }
 
     // Wendet die 4 Regeln an und gibt die Folgegeneration wieder zurück
     private boolean[][] wendeRegelnAn(boolean[][] welt) {
+        boolean[][] neueWelt = cloneWelt(welt);
+        for (int x = 1; x < welt.length - 1; x++) {
+            for (int y = 1; y < welt[y].length - 1; y++) {
+                int anzahlNachbarn = this.anzahlNachbarn(welt, x, y);
+                neueWelt[x][y] = (welt[x][y] && anzahlNachbarn == 2) || anzahlNachbarn == 3;
+            }
+        }
 
-        // TODO
-    return new boolean[1][1];
+        return neueWelt;
     }
 
     // Liefert Anzahl Nachbarn einer Zelle
@@ -55,8 +77,8 @@ public class GameOfLife {
         System.out.println("Startkonstellation");
         game.zeigeWelt(welt);
 
-        for (int i = 1; i <= 1; i++) {
-            //welt = game.wendeRegelnAn(welt);
+        for (int i = 1; i <= 100; i++) {
+            welt = game.wendeRegelnAn(welt);
             System.out.println("Generation " + i);
             game.zeigeWelt(welt);
         }
